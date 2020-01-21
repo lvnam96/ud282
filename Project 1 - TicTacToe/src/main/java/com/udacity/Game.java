@@ -1,6 +1,7 @@
 package com.udacity;
 
 import java.util.Arrays;
+import java.util.function.Function;
 
 /**
  * Created by udacity 2016
@@ -148,9 +149,103 @@ public class Game {
      * @param grid 2D array of characters representing the game board
      * @return String indicating the outcome of the game: "X wins" or "O wins" or "Tie" or "None"
      */
-    public String checkGameWinner(char [][]grid){
+    public String checkGameWinner(char [][]testGrid){
+        grid = testGrid;
+        int numOfRows = grid.length;
+        int numOfCols = grid[0].length;
         String result = "None";
-        //Student code goes here ...
+
+        // check rows
+        for (int i = 0; i < numOfRows; i++) {
+            int numOfSameSpots = 1;
+            char firstSpot = gridAt(i, 0);
+
+            if (firstSpot == '-') {// this row is not full -> move to the next row
+                continue;
+            }
+
+            for (int j = 1; j < numOfCols; j++) {
+                if (gridAt(i, j) == firstSpot) {
+                    numOfSameSpots++;
+                } else {
+                    numOfSameSpots = 0;// reset spotCounterInRow to 0
+                    break;
+                }
+            }
+
+            if (numOfSameSpots == numOfCols) {// has full row of same spots "X" or "O"
+                return String.format("%s wins", firstSpot);
+            }
+        }
+
+        // check columns
+        for (int i = 0; i < numOfCols; i++) {
+            int numOfSameSpots = 1;
+            char firstSpot = gridAt(0, i);
+
+            if (firstSpot == '-') {// this row is not full -> move to the next row
+                continue;
+            }
+
+            for (int j = 1; j < numOfRows; j++) {
+                if (gridAt(j, i) == firstSpot) {
+                    numOfSameSpots++;
+                } else {
+                    numOfSameSpots = 0;
+                    break;
+                }
+            }
+
+            if (numOfSameSpots == numOfRows) {
+                return String.format("%s wins", firstSpot);
+            }
+        }
+
+        // check 2 diagonal lines (there are always only 2 possibilities to win by this way)
+        for (int i = 0; i < numOfRows; i++) {
+            int j = i + 1;
+            char currentSpot = gridAt(i, i);
+            char nextSpot = gridAt(j, j);
+            if (currentSpot == '-') {// this row is not full -> move to the next row
+                break;
+            }
+            if (i == numOfRows - 1) {
+                return String.format("%s wins", currentSpot);
+            }
+            if (currentSpot != nextSpot) {
+                break;
+            }
+        }
+        for (int i = 2; i >= 0; i--) {
+            int j = 2 - i;
+            char currentSpot = gridAt(i, j);
+            int nextI = i - 1;
+            int nextJ = 2 - nextI;
+            char nextSpot = gridAt(nextI, nextJ);
+            if (currentSpot == '-') {// this row is not full -> move to the next row
+                break;
+            }
+            if (i == 0) {
+                return String.format("%s wins", currentSpot);
+            }
+            if (currentSpot != nextSpot) {
+                break;
+            }
+        }
+
+        // check tie
+        // this "for loop" check is here because the test is submitting the grid manually, therefore the variable "freeSpots" will not be updated via other methods
+        for (int i = 0; i < numOfRows; i++) {
+            for (int j = 0; j < numOfCols; j++) {
+                if (!(gridAt(i, j) == '-')) {
+                    freeSpots--;
+                }
+            }
+        }
+        if (freeSpots == 0) {
+            return "Tie";
+        }
+
         return result;
     }
 
